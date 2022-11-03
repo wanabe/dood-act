@@ -1,0 +1,12 @@
+#!/bin/sh
+set -x
+
+docker build -t dood-act - <<EOS
+  FROM ubuntu:22.04
+  RUN apt-get update
+  RUN apt-get install -y curl
+  RUN curl https://raw.githubusercontent.com/nektos/act/master/install.sh | bash
+  RUN echo '-P ubuntu-latest=catthehacker/ubuntu:act-latest' > /root/.actrc
+EOS
+docker run --rm -it --mount type=bind,src=/var/run/docker.sock,dst=/var/run/docker.sock -v $PWD:/work -w /work $OPT \
+  dood-act act "$@"
